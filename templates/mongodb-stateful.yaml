@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb
+  labels:
+    app: graylog
+    component: mongodb
+spec:
+  selector:
+    matchLabels:
+      app: graylog
+      component: mongodb
+  serviceName: "mongodb-svc"
+  replicas: 1
+  minReadySeconds: 10
+  template:
+    metadata:
+      labels:
+        app: graylog
+        component: mongodb
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - image: "{{ .Values.mongodb.image }}:{{ .Values.mongodb.tag }}"
+          name: mongodb
+          ports:
+            - containerPort: 27017
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /data/db
+              name: mongodb-claim0
+            - mountPath: /data/configdb
+              name: mongodb-claim1
+  volumeClaimTemplates:
+  - metadata:
+      name: mongodb-claim0
+      labels:
+        component: mongodb-claim0
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+  - metadata:
+      name: mongodb-claim1
+      labels:
+        component: mongodb-claim1  
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi

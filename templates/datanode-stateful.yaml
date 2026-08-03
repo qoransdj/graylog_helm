@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: datanode
+  labels:
+    app: graylog
+    component: datanode
+spec:
+  selector:
+    matchLabels:
+      app: graylog
+      component: datanode
+  serviceName: "datanode-svc"
+  replicas: 1
+  minReadySeconds: 10
+  template:
+    metadata:
+      labels:
+        app: graylog
+        component: datanode
+    spec:
+      terminationGracePeriodSeconds: 10
+      initContainers:
+      - name: wait-for-mongodb
+        image: busybox
+        command:
+        - sh
+        - -c
+        - |
+          until nc -z mongodb-svc 27017; do
+            echo waiting mongodb-svc;
+            sleep 5;
+          done
+      containers:
+        - env:
+            - name: GRAYLOG_DATANODE_MONGODB_URI
+              value: {{ .Values.mongodb.uri | quote }}
+            - name: GRAYLOG_DATANODE_NODE_ID_FILE
+              value: /var/lib/graylog-datanode/node-id
+            - name: GRAYLOG_DATANODE_PASSWORD_SECRET
+              value: {{ .Values.graylogSecret.passwordSecret | quote }}
+          image: "{{ .Values.datanode.image }}:{{ .Values.datanode.tag }}"
+          name: datanode
+          ports:
+            - containerPort: 8999
+              protocol: TCP
+            - containerPort: 9200
+              protocol: TCP
+            - containerPort: 9300
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /var/lib/graylog-datanode
+              name: datanode-vol
+  volumeClaimTemplates:
+  - metadata:
+      name: datanode-vol
+      labels:
+        component: datanode-claim0
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi

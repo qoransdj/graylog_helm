@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: graylog
+  labels:
+    app: graylog
+    component: graylog-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: graylog
+      component: graylog-web
+  template:
+    metadata:
+      labels:
+        app: graylog
+        component: graylog-web
+    spec:
+      initContainers:
+      - name: wait-for-mongodb
+        image: busybox
+        command:
+        - sh
+        - -c
+        - |
+          until nc -z mongodb-svc 27017; do
+            echo waiting mongodb-svc;
+            sleep 5;
+          done
+      - name: wait-for-datanode
+        image: busybox
+        command:
+        - sh
+        - -c
+        - |
+          until nc -z datanode-svc 8999; do
+            echo waiting datanode-svc;
+            sleep 5;
+          done
+      containers:
+        - command:
+            - /usr/bin/tini
+            - --
+            - /docker-entrypoint.sh
+          env:
+            - name: GRAYLOG_HTTP_BIND_ADDRESS
+              value: 0.0.0.0:9000
+            - name: GRAYLOG_HTTP_EXTERNAL_URI
+              value: http://localhost:9000/
+            - name: GRAYLOG_MONGODB_URI
+              value: {{ .Values.mongodb.uri | quote }}
+            - name: GRAYLOG_NODE_ID_FILE
+              value: /usr/share/graylog/data/data/node-id
+            - name: GRAYLOG_PASSWORD_SECRET
+              value: {{ .Values.graylogSecret.passwordSecret | quote }}
+            - name: GRAYLOG_ROOT_PASSWORD_SHA2
+              value: {{ .Values.graylogSecret.rootPasswordSha2 | quote }}
+          image: "{{ .Values.graylog.image }}:{{ .Values.graylog.tag }}"
+          name: graylog
+          ports:
+            - containerPort: 5044
+              protocol: TCP
+            - containerPort: 5140
+              protocol: UDP
+            - containerPort: 5140
+              protocol: TCP
+            - containerPort: 5555
+              protocol: TCP
+            - containerPort: 5555
+              protocol: UDP
+            - containerPort: 9000
+              protocol: TCP
+            - containerPort: 12201
+              protocol: TCP
+            - containerPort: 12201
+              protocol: UDP
+            - containerPort: 13301
+              protocol: TCP
+            - containerPort: 13302
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /usr/share/graylog/data
+              name: graylog-claim0
+      volumes:
+        - name: graylog-claim0
+          persistentVolumeClaim:
+            claimName: graylog-claim0

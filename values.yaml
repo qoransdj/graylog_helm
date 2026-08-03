@@ -1,0 +1,19 @@
+graylog:
+  image: graylog/graylog
+  tag: "7.1"
+
+datanode:
+  image: graylog/graylog-datanode
+  tag: "7.1"
+
+mongodb:
+  image: mongo
+  tag: "7.0"
+  uri: mongodb://mongodb-svc:27017/graylog
+
+service:
+  nodePort: 30900
+
+graylogSecret:
+  passwordSecret: "P81fgZuehdOr8ZxEi9WiKFT0BFeDHS520aP4X1hatbB3fp1SNnwkxZsfBuuaulAJe7WvMwuJY4OTPAwfsSZqOQqmx2Ugqi7v"
+  rootPasswordSha2: "e1dddc844ca8ad19718295dbf2f0ed6746b459c2e3582ef8bf909812a24d9fe7"
