@@ -6,6 +6,7 @@ metadata:
     app: graylog
     component: mongodb
 spec:
+  clusterIP: None
   ports:
     - name: "27017"
       port: 27017

@@ -39,6 +39,12 @@ spec:
               value: /var/lib/graylog-datanode/node-id
             - name: GRAYLOG_DATANODE_PASSWORD_SECRET
               value: {{ .Values.graylogSecret.passwordSecret | quote }}
+            - name: "discovery.type"
+              value: "single-node"
+            - name: "DISABLE_INSTALL_DEMO_CONFIG"
+              value: "true"
+            - name: GRAYLOG_DATANODE_AUTO_PROVISION
+              value: "true"
           image: "{{ .Values.datanode.image }}:{{ .Values.datanode.tag }}"
           name: datanode
           ports:

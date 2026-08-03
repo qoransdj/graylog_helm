@@ -56,6 +56,8 @@ spec:
               value: {{ .Values.graylogSecret.passwordSecret | quote }}
             - name: GRAYLOG_ROOT_PASSWORD_SHA2
               value: {{ .Values.graylogSecret.rootPasswordSha2 | quote }}
+            - name: GRAYLOG_ELASTICSEARCH_HOSTS
+              value: "http://datanode-svc:8999"
           image: "{{ .Values.graylog.image }}:{{ .Values.graylog.tag }}"
           name: graylog
           ports:

@@ -6,6 +6,7 @@ metadata:
     component: datanode
   name: datanode-svc
 spec:
+  clusterIP: None
   ports:
     - name: "8999"
       port: 8999
