@@ -37,6 +37,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
             - name: GRAYLOG_DATANODE_MONGODB_URI
               value: {{ .Values.mongodb.uri | quote }}
             - name: GRAYLOG_DATANODE_NODE_ID_FILE
@@ -44,7 +48,7 @@ spec:
             - name: GRAYLOG_DATANODE_PASSWORD_SECRET
               value: {{ .Values.graylogSecret.passwordSecret | quote }}
             - name: GRAYLOG_DATANODE_NODE_NAME
-              value: $(POD_NAME).datanode.graylog.svc.cluster.local
+              value: $(POD_NAME).datanode.$(NAMESPACE).svc.cluster.local
           image: "{{ .Values.datanode.image }}:{{ .Values.datanode.tag }}"
           name: datanode
           ports:
