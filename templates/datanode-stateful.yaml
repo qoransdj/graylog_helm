@@ -10,7 +10,7 @@ spec:
     matchLabels:
       app: graylog
       component: datanode
-  serviceName: "datanode-svc"
+  serviceName: "datanode"
   replicas: 1
   minReadySeconds: 10
   template:
@@ -27,24 +27,24 @@ spec:
         - sh
         - -c
         - |
-          until nc -z mongodb-svc 27017; do
-            echo waiting mongodb-svc;
+          until nc -z mongodb 27017; do
+            echo waiting mongodb;
             sleep 5;
           done
       containers:
         - env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
             - name: GRAYLOG_DATANODE_MONGODB_URI
               value: {{ .Values.mongodb.uri | quote }}
             - name: GRAYLOG_DATANODE_NODE_ID_FILE
               value: /var/lib/graylog-datanode/node-id
             - name: GRAYLOG_DATANODE_PASSWORD_SECRET
               value: {{ .Values.graylogSecret.passwordSecret | quote }}
-            - name: "discovery.type"
-              value: "single-node"
-            - name: "DISABLE_INSTALL_DEMO_CONFIG"
-              value: "true"
-            - name: GRAYLOG_DATANODE_AUTO_PROVISION
-              value: "true"
+            - name: GRAYLOG_DATANODE_NODE_NAME
+              value: $(POD_NAME).datanode.graylog.svc.cluster.local
           image: "{{ .Values.datanode.image }}:{{ .Values.datanode.tag }}"
           name: datanode
           ports:

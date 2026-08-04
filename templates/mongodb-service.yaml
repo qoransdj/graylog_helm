@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongodb-svc
+  name: mongodb
   labels:
     app: graylog
     component: mongodb
 spec:
-  clusterIP: None
+  #clusterIP: None
   ports:
     - name: "27017"
       port: 27017

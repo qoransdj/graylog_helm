@@ -24,8 +24,8 @@ spec:
         - sh
         - -c
         - |
-          until nc -z mongodb-svc 27017; do
-            echo waiting mongodb-svc;
+          until nc -z mongodb 27017; do
+            echo waiting mongodb;
             sleep 5;
           done
       - name: wait-for-datanode
@@ -34,8 +34,8 @@ spec:
         - sh
         - -c
         - |
-          until nc -z datanode-svc 8999; do
-            echo waiting datanode-svc;
+          until nc -z datanode 8999; do
+            echo waiting datanode;
             sleep 5;
           done
       containers:
@@ -56,8 +56,6 @@ spec:
               value: {{ .Values.graylogSecret.passwordSecret | quote }}
             - name: GRAYLOG_ROOT_PASSWORD_SHA2
               value: {{ .Values.graylogSecret.rootPasswordSha2 | quote }}
-            - name: GRAYLOG_ELASTICSEARCH_HOSTS
-              value: "http://datanode-svc:8999"
           image: "{{ .Values.graylog.image }}:{{ .Values.graylog.tag }}"
           name: graylog
           ports:

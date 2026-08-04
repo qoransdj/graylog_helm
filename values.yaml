@@ -9,7 +9,7 @@ datanode:
 mongodb:
   image: mongo
   tag: "7.0"
-  uri: mongodb://mongodb-svc:27017/graylog
+  uri: mongodb://mongodb:27017/graylog
 
 service:
   nodePort: 30900

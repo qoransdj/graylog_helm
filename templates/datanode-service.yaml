@@ -4,9 +4,9 @@ metadata:
   labels:
     app: graylog
     component: datanode
-  name: datanode-svc
+  name: datanode
 spec:
-  clusterIP: None
+  #clusterIP: None
   ports:
     - name: "8999"
       port: 8999

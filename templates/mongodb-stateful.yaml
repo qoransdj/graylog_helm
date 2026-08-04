@@ -10,7 +10,7 @@ spec:
     matchLabels:
       app: graylog
       component: mongodb
-  serviceName: "mongodb-svc"
+  serviceName: "mongodb"
   replicas: 1
   minReadySeconds: 10
   template:
