@@ -12,7 +12,7 @@ mongodb:
   uri: mongodb://mongodb:27017/graylog
 
 service:
-  nodePort: 30900
+  nodePort: 30800
 
 graylogSecret:
   passwordSecret: "P81fgZuehdOr8ZxEi9WiKFT0BFeDHS520aP4X1hatbB3fp1SNnwkxZsfBuuaulAJe7WvMwuJY4OTPAwfsSZqOQqmx2Ugqi7v"
